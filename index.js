@@ -1,10 +1,17 @@
 
-module.exports = {
+module.exports = function(app, $$){
+
+  // for email_send
+// $$.settings.smtp
+// $$.mailgun
+// $$.nodemailer
+
+  var module = {};
 
   /* -------- UTILITY FUNCTIONS -------- */
 
   // combines js objects to create a single new objext
-  extend: function(target) {
+  module.extend = function(target) {
     var sources = [].slice.call(arguments, 1);
     sources.forEach(function (source) {
       for (var prop in source) {
@@ -12,91 +19,91 @@ module.exports = {
       }
     });
     return target;
-  },
+  };
 
   // returns true if a value is an array
-  is_array: function(value) {
+  module.is_array = function(value) {
     return Object.prototype.toString.call(value) === '[object Array]';
-  },
+  };
 
 
   // returns a date a given number of days from a given date
-  future_days: function (theDate, days) {
+  module.future_days = function (theDate, days) {
     return new Date(theDate.getTime() + days*24*60*60*1000);
-  },
+  };
 
   // strips dollar sign (future general currency symbols and punctuation) from a given string
-  strip_dollars: function (str){
+  module.strip_dollars = function (str){
     return str.replace("$","");
-  },
+  };
 
   // transform string to uppercase
-  uppercase: function (string){
+  module.uppercase = function (string){
     if (string){
       return string.toUpperCase();
     }else{
       return "";
     }
-  },
+  };
 
   // capitalize first character of (every word?) of a given string
-  capitalize: function (string){
+  module.capitalize = function (string){
     if (string){
       return string.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase() });
     }else{
       return "";
     }
-  },
+  };
 
   // add commas, i think?
     // prob similar to php's number_format()
-  number_format: function (string){
+  module.number_format = function (string){
     if (string){
       return string.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }else{
       return "";
     }
-  },
+  };
 
   // truncate a given string to a given number of characters
-  truncate_string: function (str, length) {
+  module.truncate_string = function (str, length) {
    return str.length > length ? str.substring(0, length - 3) + '...' : str
-  },
+  };
 
   // generate url-safe title string from a given text string
-  url_title: function (text) {
+  module.url_title = function (text) {
     return text.toString().toLowerCase()
       .replace(/\s+/g, '-')         // replace spaces with -
       .replace(/[^\w\-]+/g, '')     // remove all non-word chars
       .replace(/\-\-+/g, '-')       // replace multiple - with single -
       .replace(/^-+/, '')           // trim from start of text
       .replace(/-+$/, '');          // trim from end of text
-  },
+  };
 
   // generate a hash-like alphanumeric token with a given number of characters
-  generate_token: function (length){
+  module.generate_token = function (length){
       var text = "";
       var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for( var i=0; i < length; i++ )
           text += possible.charAt(Math.floor(Math.random() * possible.length));
       return text;
-  },
+  };
 
   // add http:// if not in string
-  url_validate: function (string){
+  module.url_validate = function (string){
       if (string.indexOf("http://") > -1){
         var o = string;
       }else{
         var o = "http://" + string;
       }
     return o;
-  },
+  };
 
   // handle errors
     // future: write to a log in production mode or something
-  handle_error: function (err){
+  module.handle_error = function (err){
     console.log(err);
-  },
+  };
 
 
 
@@ -118,7 +125,7 @@ module.exports = {
 
 // ---------------- from previous projects, need to be updated (if we need them) -------
 
-  email_send: function($, params){
+  module.email_send = function($, params){
 
   	if ($.config.mandrill){
   		var mandrill_client = new mandrill.Mandrill($.config.mandrill.key);
@@ -268,14 +275,14 @@ module.exports = {
 
   	return true;
 
-  },
+  };
 
 
 
 
 
 
-  seo_date_calendar: function(date_start, date_end){
+  module.seo_date_calendar = function(date_start, date_end){
     var start = new Date(date_start);
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var date_format = months[start.getMonth()] +' '+ start.getDate() +', '+ start.getFullYear();
@@ -295,44 +302,44 @@ module.exports = {
       }
     }
     return date_format;
-  },
+  };
 
 
   // lol
   // maybe abstract the date stuff to use for other seo date wranglin stuff or whatever?
-  seo_title_calendar: function(title, city, state, date_start, date_end){
+  module.seo_title_calendar = function(title, city, state, date_start, date_end){
     // "event title, city, state - aug 27, 2014"
     var o = title + ", " + city + ", " + state + ", " + seo_date_calendar(date_start, date_end);
     return o;
-  },
+  };
 
 
 
-  seo_slug_calendar: function(title, date_start){
+  module.seo_slug_calendar = function(title, date_start){
     // 11-20-2015-seo-title-like-this
     var date = new Date(date_start);
     var months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
     var date_format = months[date.getMonth()] +'-'+ date.getDate() +'-'+ date.getFullYear();
     var o = date_format + '-' + $.lexxi.url_title(title);
     return o;
-  },
+  };
 
 
 
 
-  in_array: function(haystack, needle){
+  module.in_array = function(haystack, needle){
   	var o = false;
   	if (haystack.indexOf(''+needle) > -1){
   		o = true;
   	}
   	return o;
-  },
+  };
 
 
 
 
 
-  resize_s3: function(req, res, models, $, file_type, callback){
+  module.resize_s3 = function(req, res, models, $, file_type, callback){
 
     var ext = path.extname(req.body.filename);
     var mimetype = mime.lookup(path.extname(req.body.filename));
@@ -404,7 +411,7 @@ module.exports = {
       });
     }).done();
 
-  },
+  };
 
 
 
@@ -414,7 +421,7 @@ module.exports = {
 
 
 
-  resize_s3_multiple: function(req, res, models, $, file_type, filename, callback){
+  module.resize_s3_multiple = function(req, res, models, $, file_type, filename, callback){
 
     var ext = path.extname(filename);
     var mimetype = mime.lookup(path.extname(filename));
@@ -479,7 +486,7 @@ module.exports = {
       });
     }).done();
 
-  },
+  };
 
 
 
@@ -494,7 +501,7 @@ module.exports = {
 
 
 
-  unserialize: function(data) {
+  module.unserialize = function(data) {
     //  discuss at: http://phpjs.org/functions/unserialize/
     // original by: Arpad Ray (mailto:arpad@php.net)
     // improved by: Pedro Tainha (http://www.pedrotainha.com)
@@ -670,27 +677,28 @@ module.exports = {
     };
 
     return _unserialize((data + ''), 0)[2];
-  },
+  };
 
 
 
 
 
-  truncate_string: function(str, length) {
+  module.truncate_string = function(str, length) {
    return str.length > length ? str.substring(0, length - 3) + '...' : str
-  },
+  };
 
 
 
 
-  url_encode: function(o){
+  module.url_encode = function(o){
     return encodeURIComponent(o);
-  },
+  };
 
-  url_decode: function(o){
+  module.url_decode = function(o){
     return decodeURIComponent(o);
-  }
+  };
 
 
+  return module;
 
 };
