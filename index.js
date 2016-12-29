@@ -1,10 +1,5 @@
 
-module.exports = function(app, $$){
-
-  // for email_send
-// $$.settings.smtp
-// $$.mailgun
-// $$.nodemailer
+module.exports = function(app){
 
   var module = {};
 
@@ -125,152 +120,102 @@ module.exports = function(app, $$){
 
 // ---------------- from previous projects, need to be updated (if we need them) -------
 
+// fixit stopped here
   module.email_send = function($, params){
 
-  	if ($.config.mandrill){
-  		var mandrill_client = new mandrill.Mandrill($.config.mandrill.key);
-  		if (params.to_object){
-  			var to = params.to_object;
-  		}else{
-  			var to = [];
-  			if (params.to_list){
-  				$._.forEach(params.to_list, function(dd) {
-  					to.push({
-  						"email": dd,
-  						"type": "to"
-  					});
-  				});
-  			}
-  			if (params.to){
-  				to.push({
-  					"email": params.to,
-  					"type": "to"
-  				});
-  			}
-  			if (params.cc){
-  				to.push({
-  					"email": params.cc,
-  					"type": "cc"
-  				});
-  			}
-  			if (params.bcc){
-  				to.push({
-  					"email": params.bcc,
-  					"type": "bcc"
-  				});
-  			}
-  		}
-  		var prefs = {
-  		  "to": to,
-  	    "from_email": params.from_email,
-  	    "from_name": params.from_name,
-  		  "subject": params.subject
-  	  };
-  	  if (params.html){
-  		  prefs.html = params.message;
-  		  prefs.auto_text = true;
-  	  }else{
-  			prefs.text = params.message;
-  	  }
-  	  mandrill_client.messages.send({"message": prefs}, function(result) {
-  	// fixit send success
-  	  	// console.log('success:');
-  	  	// console.log(result);
-  	  }, function(e) {
-  	// fixit write to log file on error
-  	      console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
-  	  });
-  	}
+// console.log('what up tho');
+console.log(params);
+console.log($);
 
-  	else if ($.config.mailgun){
-
-  		var prefs = {
-  			from: params.from_name + ' <'+params.from_email+'>',
-  			subject: params.subject
-  		};
-
-  		if (params.to_object){
-  			var to = [];
-  			var cc = [];
-  			var bcc = [];
-  			$._.forEach(params.to_object, function(dd) {
-  				if (dd.type == 'to'){
-  					if (dd.name){
-  						to.push(dd.name+' <'+dd.email+'>');
-  					}else{
-  						to.push(dd.email);
-  					}
-  				}
-
-  				if (dd.type == 'cc'){
-  					if (dd.name){
-  						cc.push(dd.name+' <'+dd.email+'>');
-  					}else{
-  						cc.push(dd.email);
-  					}
-  				}
-
-  				if (dd.type == 'bcc'){
-  					if (dd.name){
-  						bcc.push(dd.name+' <'+dd.email+'>');
-  					}else{
-  						bcc.push(dd.email);
-  					}
-  				}
-  			});
-
-  			if (!$._.isEmpty(to)){
-  				prefs.to = to.toString();
-  			}
-  			if (!$._.isEmpty(cc)){
-  				prefs.cc = cc.toString();
-  			}
-  			if (!$._.isEmpty(bcc)){
-  				prefs.bcc = bcc.toString();
-  			}
-
-  		}else{
-  			if (params.to_list){
-  				prefs.to = params.to_list.toString();
-  			}else{
-  				if (params.to){
-  					prefs.to = params.to;
-  				}
-  			}
-  			if (params.cc){
-  				prefs.cc = params.cc;
-  			}
-  			if (params.bcc){
-  				prefs.bcc = params.bcc;
-  			}
-  		}
-
-  		if (params.html){
-  			prefs.html = params.message;
-  		}else{
-  			prefs.text = params.message;
-  		}
-
-  		var mailgun_client = new mailgun({apiKey: $.config.mailgun.key, domain: $.config.mailgun.domain});
-
-
-  		mailgun_client.messages().send(prefs, function (err, body) {
-
-  				if (err){
-  					return $.lexxi.handle_error(err);
-  				}else{
-  					// fixit send success;
-  					return true; // ?? wat
-  				}
-  		});
-  	}
-
-
-  	else{
-
-  		// handle other mail
-
-  	}
+    // if ($.config.mailgun){
+    //
+  	// 	var prefs = {
+  	// 		from: params.from_name + ' <'+params.from_email+'>',
+  	// 		subject: params.subject
+  	// 	};
+    //
+  	// 	if (params.to_object){
+  	// 		var to = [];
+  	// 		var cc = [];
+  	// 		var bcc = [];
+  	// 		$._.forEach(params.to_object, function(dd) {
+  	// 			if (dd.type == 'to'){
+  	// 				if (dd.name){
+  	// 					to.push(dd.name+' <'+dd.email+'>');
+  	// 				}else{
+  	// 					to.push(dd.email);
+  	// 				}
+  	// 			}
+    //
+  	// 			if (dd.type == 'cc'){
+  	// 				if (dd.name){
+  	// 					cc.push(dd.name+' <'+dd.email+'>');
+  	// 				}else{
+  	// 					cc.push(dd.email);
+  	// 				}
+  	// 			}
+    //
+  	// 			if (dd.type == 'bcc'){
+  	// 				if (dd.name){
+  	// 					bcc.push(dd.name+' <'+dd.email+'>');
+  	// 				}else{
+  	// 					bcc.push(dd.email);
+  	// 				}
+  	// 			}
+  	// 		});
+    //
+  	// 		if (!$._.isEmpty(to)){
+  	// 			prefs.to = to.toString();
+  	// 		}
+  	// 		if (!$._.isEmpty(cc)){
+  	// 			prefs.cc = cc.toString();
+  	// 		}
+  	// 		if (!$._.isEmpty(bcc)){
+  	// 			prefs.bcc = bcc.toString();
+  	// 		}
+    //
+  	// 	}else{
+  	// 		if (params.to_list){
+  	// 			prefs.to = params.to_list.toString();
+  	// 		}else{
+  	// 			if (params.to){
+  	// 				prefs.to = params.to;
+  	// 			}
+  	// 		}
+  	// 		if (params.cc){
+  	// 			prefs.cc = params.cc;
+  	// 		}
+  	// 		if (params.bcc){
+  	// 			prefs.bcc = params.bcc;
+  	// 		}
+  	// 	}
+    //
+  	// 	if (params.html){
+  	// 		prefs.html = params.message;
+  	// 	}else{
+  	// 		prefs.text = params.message;
+  	// 	}
+    //
+  	// 	var mailgun_client = new mailgun({apiKey: $.config.mailgun.key, domain: $.config.mailgun.domain});
+    //
+    //
+  	// 	mailgun_client.messages().send(prefs, function (err, body) {
+    //
+  	// 			if (err){
+  	// 				return $.lexxi.handle_error(err);
+  	// 			}else{
+  	// 				// fixit send success;
+  	// 				return true; // ?? wat
+  	// 			}
+  	// 	});
+  	// }
+    //
+    //
+  	// else{
+    //
+  	// 	// handle other mail
+    //
+  	// }
 
 
   	return true;
