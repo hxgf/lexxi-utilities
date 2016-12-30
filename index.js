@@ -118,14 +118,134 @@ module.exports = function(app){
 
 
 
-// ---------------- from previous projects, need to be updated (if we need them) -------
 
 // fixit stopped here
   module.email_send = function($, params){
 
+
+    var mailOptions = {
+
+// smtp
+        from: '"Fred Foo 👥" <icarus@dvst.cc>', // sender address
+        to: 'jonathan.youngblood@gmail.com', // list of receivers
+        subject: 'Hello ✔', // Subject line
+        text: 'Hello world 🐴', // plaintext body
+        html: '<b>Hello world 🐴</b>' // html body
+
+
+// mailgun
+        // from: 'icarus@dvst.cc',
+        // to: 'jonathan.youngblood@gmail.com', // An array if you have multiple recipients.
+        // // cc:'second@domain.com',
+        // // bcc:'secretagent@company.gov',
+        // subject: 'Hey you, awesome!',
+        // // 'h:Reply-To': 'reply2this@company.com',
+        // //You can use "html:" to send HTML email content. It's magic!
+        // html: '<b>Wow Big powerful letters</b>',
+        // //You can use "text:" to send plain-text content. It's oldschool!
+        // text: 'Mailgun rocks, pow pow!'
+
+    };
+
+    $.mail_transport.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        console.log('Error: ' + err);
+      }
+      else {
+        console.log('Response: ' + info);
+      }
+    });
+
+
+// fixit stopped here
+
+// fixit integrate extras (see notes)
+
+
+    // using a template w/ mailgun
+
+    // var handlebars = require('handlebars');
+    //
+    // var contextObject = {
+    //   variable1: 'value1',
+    //   variable2: 'value2'
+    // };
+    //
+    // nodemailerMailgun.sendMail({
+    //   from: 'myemail@example.com',
+    //   to: 'recipient@domain.com', // An array if you have multiple recipients.
+    //   subject: 'Hey you, awesome!',
+    //   template: {
+    //     name: 'email.hbs',
+    //     engine: 'handlebars',
+    //     context: contextObject
+    //   }
+    // }, function (err, info) {
+    //   if (err) {
+    //     console.log('Error: ' + err);
+    //   }
+    //   else {
+    //     console.log('Response: ' + info);
+    //   }
+    // });
+
+
+
+
+
+    // using a template
+
+    // //attach the plugin to the nodemailer transporter
+    // transporter.use('compile', hbs(options));
+    // //send mail with options
+    // var mail = {
+    //    from: 'from@domain.com',
+    //    to: 'to@domain.com',
+    //    subject: 'Test',
+    //    template: 'email',
+    //    context: {
+    //        name: 'Name'
+    //    }
+    // }
+    // transporter.sendMail(mail);
+
+
+
+
+
+    // html to text
+
+    // transporter.sendMail({
+    //     from: 'me@example.com',
+    //     to: 'receiver@example.com',
+    //     html: '<b>Hello world!</b>'
+    // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // console.log('what up tho');
-console.log(params);
-console.log($);
+// console.log(params);
+// console.log($);
 
     // if ($.config.mailgun){
     //
@@ -226,6 +346,7 @@ console.log($);
 
 
 
+  // ---------------- from previous projects, need to be updated (if we need them) -------
 
   module.seo_date_calendar = function(date_start, date_end){
     var start = new Date(date_start);
