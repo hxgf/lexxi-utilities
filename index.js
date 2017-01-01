@@ -1,57 +1,19 @@
 
 module.exports = function(app){
-
   var module = {};
-
-  /* -------- UTILITY FUNCTIONS -------- */
-
-  // combines js objects to create a single new objext
-  module.extend = function(target) {
-    var sources = [].slice.call(arguments, 1);
-    sources.forEach(function (source) {
-      for (var prop in source) {
-        target[prop] = source[prop];
-      }
-    });
-    return target;
-  };
-
-  // returns true if a value is an array
-  module.is_array = function(value) {
-    return Object.prototype.toString.call(value) === '[object Array]';
-  };
-
 
   // returns a date a given number of days from a given date
   module.future_days = function (theDate, days) {
     return new Date(theDate.getTime() + days*24*60*60*1000);
   };
 
-  // strips dollar sign (future general currency symbols and punctuation) from a given string
-  module.strip_dollars = function (str){
-    return str.replace("$","");
+  // strip any character that isn't a dot or a digit
+    // good for decimal-based currency. otherwise, consider something like globalizejs
+  module.currency_strip = function (str){
+    return Number(str.replace(/[^0-9\.]+/g,"")); // Remove all non dot / digits
   };
 
-  // transform string to uppercase
-  module.uppercase = function (string){
-    if (string){
-      return string.toUpperCase();
-    }else{
-      return "";
-    }
-  };
-
-  // capitalize first character of (every word?) of a given string
-  module.capitalize = function (string){
-    if (string){
-      return string.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase() });
-    }else{
-      return "";
-    }
-  };
-
-  // add commas, i think?
-    // prob similar to php's number_format()
+  // add commas -- similar to php's number_format()
   module.number_format = function (string){
     if (string){
       return string.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -60,23 +22,8 @@ module.exports = function(app){
     }
   };
 
-  // truncate a given string to a given number of characters
-  module.truncate_string = function (str, length) {
-   return str.length > length ? str.substring(0, length - 3) + '...' : str
-  };
-
-  // generate url-safe title string from a given text string
-  module.url_title = function (text) {
-    return text.toString().toLowerCase()
-      .replace(/\s+/g, '-')         // replace spaces with -
-      .replace(/[^\w\-]+/g, '')     // remove all non-word chars
-      .replace(/\-\-+/g, '-')       // replace multiple - with single -
-      .replace(/^-+/, '')           // trim from start of text
-      .replace(/-+$/, '');          // trim from end of text
-  };
-
-  // generate a hash-like alphanumeric token with a given number of characters
-  module.generate_token = function (length){
+  // easily generate a hash-like alphanumeric token with a given number of characters
+  module.token_generate = function (length){
       var text = "";
       var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for( var i=0; i < length; i++ )
@@ -84,9 +31,9 @@ module.exports = function(app){
       return text;
   };
 
-  // add http:// if not in string
+  // add http(s):// if not in string
   module.url_validate = function (string){
-      if (string.indexOf("http://") > -1){
+      if (string.indexOf("http://") > -1 || string.indexOf("https://")){
         var o = string;
       }else{
         var o = "http://" + string;
@@ -94,464 +41,66 @@ module.exports = function(app){
     return o;
   };
 
-  // handle errors
-    // future: write to a log in production mode or something
-  module.handle_error = function (err){
+  // handle application errors
+    // fixit write this to a log or something idk
+  module.application_error = function (err){
     console.log(err);
   };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// fixit stopped here
-  module.email_send = function($, params){
-
-
-    var mailOptions = {
-
-// smtp
-        from: '"Fred Foo 👥" <icarus@dvst.cc>', // sender address
-        to: 'jonathan.youngblood@gmail.com', // list of receivers
-        subject: 'Hello ✔', // Subject line
-        text: 'Hello world 🐴', // plaintext body
-        html: '<b>Hello world 🐴</b>' // html body
-
-
-// mailgun
-        // from: 'icarus@dvst.cc',
-        // to: 'jonathan.youngblood@gmail.com', // An array if you have multiple recipients.
-        // // cc:'second@domain.com',
-        // // bcc:'secretagent@company.gov',
-        // subject: 'Hey you, awesome!',
-        // // 'h:Reply-To': 'reply2this@company.com',
-        // //You can use "html:" to send HTML email content. It's magic!
-        // html: '<b>Wow Big powerful letters</b>',
-        // //You can use "text:" to send plain-text content. It's oldschool!
-        // text: 'Mailgun rocks, pow pow!'
-
-    };
-
-    $.mail_transport.sendMail(mailOptions, function (err, info) {
-      if (err) {
-        console.log('Error: ' + err);
-      }
-      else {
-        console.log('Response: ' + info);
-      }
-    });
-
-
-// fixit stopped here
-
-// fixit integrate extras (see notes)
-
-
-    // using a template w/ mailgun
-
-    // var handlebars = require('handlebars');
-    //
-    // var contextObject = {
-    //   variable1: 'value1',
-    //   variable2: 'value2'
-    // };
-    //
-    // nodemailerMailgun.sendMail({
-    //   from: 'myemail@example.com',
-    //   to: 'recipient@domain.com', // An array if you have multiple recipients.
-    //   subject: 'Hey you, awesome!',
-    //   template: {
-    //     name: 'email.hbs',
-    //     engine: 'handlebars',
-    //     context: contextObject
-    //   }
-    // }, function (err, info) {
-    //   if (err) {
-    //     console.log('Error: ' + err);
-    //   }
-    //   else {
-    //     console.log('Response: ' + info);
-    //   }
-    // });
-
-
-
-
-
-    // using a template
-
-    // //attach the plugin to the nodemailer transporter
-    // transporter.use('compile', hbs(options));
-    // //send mail with options
-    // var mail = {
-    //    from: 'from@domain.com',
-    //    to: 'to@domain.com',
-    //    subject: 'Test',
-    //    template: 'email',
-    //    context: {
-    //        name: 'Name'
-    //    }
-    // }
-    // transporter.sendMail(mail);
-
-
-
-
-
-    // html to text
-
-    // transporter.sendMail({
-    //     from: 'me@example.com',
-    //     to: 'receiver@example.com',
-    //     html: '<b>Hello world!</b>'
-    // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// console.log('what up tho');
-// console.log(params);
-// console.log($);
-
-    // if ($.config.mailgun){
-    //
-  	// 	var prefs = {
-  	// 		from: params.from_name + ' <'+params.from_email+'>',
-  	// 		subject: params.subject
-  	// 	};
-    //
-  	// 	if (params.to_object){
-  	// 		var to = [];
-  	// 		var cc = [];
-  	// 		var bcc = [];
-  	// 		$._.forEach(params.to_object, function(dd) {
-  	// 			if (dd.type == 'to'){
-  	// 				if (dd.name){
-  	// 					to.push(dd.name+' <'+dd.email+'>');
-  	// 				}else{
-  	// 					to.push(dd.email);
-  	// 				}
-  	// 			}
-    //
-  	// 			if (dd.type == 'cc'){
-  	// 				if (dd.name){
-  	// 					cc.push(dd.name+' <'+dd.email+'>');
-  	// 				}else{
-  	// 					cc.push(dd.email);
-  	// 				}
-  	// 			}
-    //
-  	// 			if (dd.type == 'bcc'){
-  	// 				if (dd.name){
-  	// 					bcc.push(dd.name+' <'+dd.email+'>');
-  	// 				}else{
-  	// 					bcc.push(dd.email);
-  	// 				}
-  	// 			}
-  	// 		});
-    //
-  	// 		if (!$._.isEmpty(to)){
-  	// 			prefs.to = to.toString();
-  	// 		}
-  	// 		if (!$._.isEmpty(cc)){
-  	// 			prefs.cc = cc.toString();
-  	// 		}
-  	// 		if (!$._.isEmpty(bcc)){
-  	// 			prefs.bcc = bcc.toString();
-  	// 		}
-    //
-  	// 	}else{
-  	// 		if (params.to_list){
-  	// 			prefs.to = params.to_list.toString();
-  	// 		}else{
-  	// 			if (params.to){
-  	// 				prefs.to = params.to;
-  	// 			}
-  	// 		}
-  	// 		if (params.cc){
-  	// 			prefs.cc = params.cc;
-  	// 		}
-  	// 		if (params.bcc){
-  	// 			prefs.bcc = params.bcc;
-  	// 		}
-  	// 	}
-    //
-  	// 	if (params.html){
-  	// 		prefs.html = params.message;
-  	// 	}else{
-  	// 		prefs.text = params.message;
-  	// 	}
-    //
-  	// 	var mailgun_client = new mailgun({apiKey: $.config.mailgun.key, domain: $.config.mailgun.domain});
-    //
-    //
-  	// 	mailgun_client.messages().send(prefs, function (err, body) {
-    //
-  	// 			if (err){
-  	// 				return $.lexxi.handle_error(err);
-  	// 			}else{
-  	// 				// fixit send success;
-  	// 				return true; // ?? wat
-  	// 			}
-  	// 	});
-  	// }
-    //
-    //
-  	// else{
-    //
-  	// 	// handle other mail
-    //
-  	// }
-
-
-  	return true;
-
+  module.url_encode = function(o){
+    return encodeURIComponent(o);
+  };
+
+  module.url_decode = function(o){
+    return decodeURIComponent(o);
   };
 
 
 
 
 
-  // ---------------- from previous projects, need to be updated (if we need them) -------
-
-  module.seo_date_calendar = function(date_start, date_end){
-    var start = new Date(date_start);
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var date_format = months[start.getMonth()] +' '+ start.getDate() +', '+ start.getFullYear();
-    if (date_end && date_end !== date_start){
-      var end = new Date(date_end);
-      if (start.getFullYear() === end.getFullYear()){
-        if (start.getMonth() === end.getMonth()){
-          // 2 dates
-          var date_format = months[start.getMonth()] +' '+ start.getDate() +'-'+end.getDate()+', '+ end.getFullYear();
-        }else{
-          // 2 dates/months
-          var date_format = months[start.getMonth()] +' '+ start.getDate() +' - '+months[end.getMonth()]+' '+ end.getDate()+', '+ start.getFullYear();
-        }
+  module.email_send = function($, params){
+    var mail_options = {
+      from: params.from,
+      subject: params.subject,
+      to: params.to
+    };
+    if (params.cc){
+      mail_options.cc = params.cc;
+    }
+    if (params.bcc){
+      mail_options.bcc = params.bcc;
+    }
+    if (params.reply_to){
+      if ($.mail_mailgun){
+        mail_options['h:Reply-To'] = params.reply_to;
       }else{
-        // 2 dates/months/years
-        var date_format = months[start.getMonth()] +' '+ start.getDate() +', '+ start.getFullYear() + ' - ' + months[end.getMonth()] +' '+ end.getDate() +', '+ end.getFullYear();
+        mail_options.replyTo = params.reply_to;
       }
     }
-    return date_format;
-  };
-
-
-  // lol
-  // maybe abstract the date stuff to use for other seo date wranglin stuff or whatever?
-  module.seo_title_calendar = function(title, city, state, date_start, date_end){
-    // "event title, city, state - aug 27, 2014"
-    var o = title + ", " + city + ", " + state + ", " + seo_date_calendar(date_start, date_end);
-    return o;
-  };
-
-
-
-  module.seo_slug_calendar = function(title, date_start){
-    // 11-20-2015-seo-title-like-this
-    var date = new Date(date_start);
-    var months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
-    var date_format = months[date.getMonth()] +'-'+ date.getDate() +'-'+ date.getFullYear();
-    var o = date_format + '-' + $.lexxi.url_title(title);
-    return o;
-  };
-
-
-
-
-  module.in_array = function(haystack, needle){
-  	var o = false;
-  	if (haystack.indexOf(''+needle) > -1){
-  		o = true;
-  	}
-  	return o;
-  };
-
-
-
-
-
-  module.resize_s3 = function(req, res, models, $, file_type, callback){
-
-    var ext = path.extname(req.body.filename);
-    var mimetype = mime.lookup(path.extname(req.body.filename));
-
-    var filename_original = req.body.filename;
-    var filename_new = $.lexxi.url_title(filename_original.substr(0, filename_original.lastIndexOf('.')).toLowerCase());
-
-  	var src = $.__base + 'app/uploads/temp-' + filename_new + ext;
-
-    var site_code = $.config.site_code;
-    var file_id = $.file_id;
-
-    $.q.fcall(function(){
-
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(250, "250^")
-        .gravity("Center")
-  			.crop(250, 250)
-  			.extent(250, 250)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext, function (err) {
-          if (err) return $.lexxi.handle_error(err);
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext,
-  		      '/'+file_type+'-' + file_id +'-s'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext);
-  		    });
-  		});
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(500)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext, function (err) {
-          if (err) return $.lexxi.handle_error(err);
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext,
-  		      '/'+file_type+'-' + file_id +'-m'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext);
-
-            callback(ext, $);
-
-  		    });
-  		});
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(1024)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext, function (err) {
-          if (err) return $.lexxi.handle_error(err);
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext,
-  		      '/'+file_type+'-' + file_id +'-l'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext);
-  		    });
-  		});
-    }).then(function(){
-      s3.putFile(src,
-        '/'+file_type+'-' + file_id +'-o'+ ext,
-        { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-          if (err) return $.lexxi.handle_error(err);
-  	      fs.unlink(src);
-      });
-    }).done();
-
-  };
-
-
-
-
-
-
-
-
-
-  module.resize_s3_multiple = function(req, res, models, $, file_type, filename, callback){
-
-    var ext = path.extname(filename);
-    var mimetype = mime.lookup(path.extname(filename));
-  	var src = $.__base + 'app/uploads/temp-'+filename;
-
-
-    var site_code = $.config.site_code;
-    var file_id = $.file_id;
-
-    $.q.fcall(function(){
-
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(250, "250^")
-        .gravity("Center")
-  			.crop(250, 250)
-  			.extent(250, 250)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext, function (err) {
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext,
-  		      '/'+file_type+'-' + file_id +'-s'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-s'+ ext);
-  		    });
-  		});
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(500)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext, function (err) {
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext,
-  		      '/'+file_type+'-' + file_id +'-m'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-m'+ ext);
-
-            callback(ext, $);
-
-  		    });
-  		});
-  		gm(src)
-  			.options({imageMagick: true})
-  			.resize(1024)
-  			.quality(90)
-  			.write($.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext, function (err) {
-  		    s3.putFile(
-  		      $.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext,
-  		      '/'+file_type+'-' + file_id +'-l'+ ext,
-  		      { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  		      if (err) return $.lexxi.handle_error(err);
-  		      fs.unlink($.__base + 'app/uploads/'+file_type+'-' + file_id +'-l'+ ext);
-  		    });
-  		});
-    }).then(function(){
-      s3.putFile(src,
-        '/'+file_type+'-' + file_id +'-o'+ ext,
-        { 'x-amz-acl': 'public-read', 'Content-Type': mimetype }, function(err, res){
-  	      fs.unlink(src);
-      });
-    }).done();
-
+    if (params.html){
+      mail_options.html = params.message;
+    }else{
+      mail_options.text = params.message;
+    }
+    if (params.template){
+      mail_options.template = params.template;
+      mail_options.context = params.data;
+    }
+    $.mail_transport.sendMail(mail_options, function (err, info) {
+      if (err) {
+        $.lexxi.application_error({
+          type: 'email_send',
+          err: err
+        });
+        return next(err);
+      }
+      if (info){
+        console.log(info);
+      }
+    });
+  	return true;
   };
 
 
@@ -567,34 +116,14 @@ module.exports = function(app){
 
 
 
-  module.unserialize = function(data) {
-    //  discuss at: http://phpjs.org/functions/unserialize/
-    // original by: Arpad Ray (mailto:arpad@php.net)
-    // improved by: Pedro Tainha (http://www.pedrotainha.com)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Chris
-    // improved by: James
-    // improved by: Le Torbi
-    // improved by: Eli Skeggs
-    // bugfixed by: dptr1988
-    // bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //  revised by: d3x
-    //    input by: Brett Zamir (http://brett-zamir.me)
-    //    input by: Martin (http://www.erlenwiese.de/)
-    //    input by: kilops
-    //    input by: Jaroslaw Czarniak
-    //        note: We feel the main purpose of this function should be to ease the transport of data between php & js
-    //        note: Aiming for PHP-compatibility, we have to translate objects to arrays
-    //   example 1: unserialize('a:3:{i:0;s:5:"Kevin";i:1;s:3:"van";i:2;s:9:"Zonneveld";}');
-    //   returns 1: ['Kevin', 'van', 'Zonneveld']
-    //   example 2: unserialize('a:3:{s:9:"firstName";s:5:"Kevin";s:7:"midName";s:3:"van";s:7:"surName";s:9:"Zonneveld";}');
-    //   returns 2: {firstName: 'Kevin', midName: 'van', surName: 'Zonneveld'}
 
+
+
+
+
+  module.unserialize = function(data) { // this is from php.js
     var that = this,
       utf8Overhead = function(chr) {
-        // http://phpjs.org/functions/unserialize:571#comment_95906
         var code = chr.charCodeAt(0);
         if (  code < 0x0080
               || 0x00A0 <= code && code <= 0x00FF
@@ -614,7 +143,6 @@ module.exports = function(app){
       var i = 2,
         buf = [],
         chr = data.slice(offset, offset + 1);
-
       while (chr != stopchr) {
         if ((i + offset) > data.length) {
           error('Error', 'Invalid');
@@ -627,7 +155,6 @@ module.exports = function(app){
     };
     read_chrs = function(data, offset, length) {
       var i, chr, buf;
-
       buf = [];
       for (i = 0; i < length; i++) {
         chr = data.slice(offset + (i - 1), offset + i);
@@ -644,15 +171,12 @@ module.exports = function(app){
         typeconvert = function(x) {
           return x;
         };
-
       if (!offset) {
         offset = 0;
       }
       dtype = (data.slice(offset, offset + 1))
         .toLowerCase();
-
       dataoffset = offset + 2;
-
       switch (dtype) {
       case 'i':
         typeconvert = function(x) {
@@ -689,7 +213,6 @@ module.exports = function(app){
         chrs = ccount[0];
         stringlength = ccount[1];
         dataoffset += chrs + 2;
-
         readData = read_chrs(data, dataoffset + 1, parseInt(stringlength, 10));
         chrs = readData[0];
         readdata = readData[1];
@@ -700,39 +223,31 @@ module.exports = function(app){
         break;
       case 'a':
         readdata = {};
-
         keyandchrs = read_until(data, dataoffset, ':');
         chrs = keyandchrs[0];
         keys = keyandchrs[1];
         dataoffset += chrs + 2;
-
         length = parseInt(keys, 10);
         contig = true;
-
         for (i = 0; i < length; i++) {
           kprops = _unserialize(data, dataoffset);
           kchrs = kprops[1];
           key = kprops[2];
           dataoffset += kchrs;
-
           vprops = _unserialize(data, dataoffset);
           vchrs = vprops[1];
           value = vprops[2];
           dataoffset += vchrs;
-
           if (key !== i)
             contig = false;
-
           readdata[key] = value;
         }
-
         if (contig) {
           array = new Array(length);
           for (i = 0; i < length; i++)
             array[i] = readdata[i];
           readdata = array;
         }
-
         dataoffset += 1;
         break;
       default:
@@ -741,28 +256,10 @@ module.exports = function(app){
       }
       return [dtype, dataoffset - offset, typeconvert(readdata)];
     };
-
     return _unserialize((data + ''), 0)[2];
   };
 
 
-
-
-
-  module.truncate_string = function(str, length) {
-   return str.length > length ? str.substring(0, length - 3) + '...' : str
-  };
-
-
-
-
-  module.url_encode = function(o){
-    return encodeURIComponent(o);
-  };
-
-  module.url_decode = function(o){
-    return decodeURIComponent(o);
-  };
 
 
   return module;

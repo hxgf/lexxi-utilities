@@ -1,6 +1,6 @@
 {
   "name": "lexxi-utilities",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "support library for lexxi.js",
   "main": "index.js",
   "repository": {
